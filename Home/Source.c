@@ -1,51 +1,45 @@
 #include <stdio.h>
-#include <locale.h>
+#include <stdlib.h>
 
-// 1. Создание структуры для хранения записи
-struct Flight {
-    int flight_number;       
-    char departure_time[10]; 
-    char arrival_time[10];   
-    char destination[50];    
-    char plane_model[30];    
-    float distance;          
-};
+int main(void) {
+    int n;
 
-int main() {
-   
-    setlocale(LC_ALL, "Russian");
+    printf("Р’РІРµРґРёС‚Рµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РјР°СЃСЃРёРІР°: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("РќРµРєРѕСЂСЂРµРєС‚РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ.\n");
+        return 1;
+    }
 
-   
-    struct Flight my_flight;
+    int* array = malloc(n * sizeof(int));
+    if (array == NULL) {
+        printf("РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹РґРµР»РёС‚СЊ РїР°РјСЏС‚СЊ.\n");
+        return 1;
+    }
 
-    printf("--- Ввод данных об авиарейсе ---\n");
+    printf("Р’РІРµРґРёС‚Рµ %d С†РµР»С‹С… С‡РёСЃРµР»:\n", n);
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &array[i]) != 1) {
+            printf("РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІРІРѕРґ.\n");
+            free(array);
+            return 1;
+        }
+    }
 
-    printf("Введите номер авиарейса: ");
-    scanf("%d", &my_flight.flight_number);
+    int lastPosition = -1;
 
-    printf("Введите время вылета (ЧЧ:ММ): ");
-    scanf("%9s", my_flight.departure_time);
+    for (int i = 0; i < n; i++) {
+        if (array[i] < 0 && array[i] % 3 == 0) {
+            lastPosition = i + 1;
+        }
+    }
 
-    printf("Введите время прилета (ЧЧ:ММ): ");
-    scanf("%9s", my_flight.arrival_time);
+    if (lastPosition == -1) {
+        printf("Р’ РјР°СЃСЃРёРІРµ РЅРµС‚ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ, РґРµР»СЏС‰РёС…СЃСЏ РЅР° 3.\n");
+    }
+    else {
+        printf("РќРѕРјРµСЂ РїРѕСЃР»РµРґРЅРµРіРѕ РїРѕРґС…РѕРґСЏС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р°: %d\n", lastPosition);
+    }
 
-    printf("Введите направление (город): ");
-    scanf("%49s", my_flight.destination);
-
-    printf("Введите марку самолета: ");
-    scanf("%29s", my_flight.plane_model);
-
-    printf("Введите расстояние (км): ");
-    scanf("%f", &my_flight.distance);
-
-  
-    printf("\n--- Информация о рейсе ---\n");
-    printf("№ Авиарейса:      %d\n", my_flight.flight_number);
-    printf("Время вылета:     %s\n", my_flight.departure_time);
-    printf("Время прилета:    %s\n", my_flight.arrival_time);
-    printf("Направление:      %s\n", my_flight.destination);
-    printf("Марка самолета:   %s\n", my_flight.plane_model);
-    printf("Расстояние:       %.1f км\n", my_flight.distance);
-
+    free(array);
     return 0;
 }
