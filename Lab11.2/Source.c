@@ -1,37 +1,65 @@
 #include <stdio.h>
-#include <time.h>
-#include <locale.h>
+#include <math.h>
 
-int main() {
-    setlocale(LC_ALL, "Russian");
+#define N 100
+
+/* ==== РЎРѕР±СЃС‚РІРµРЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РёР· РІР°СЂРёР°РЅС‚Р° 10 ====
+   y = x^2 + 2*pi*cos(pi*x) */
+double func(double x)
+{
+    return x * x + 2.0 * M_PI * cos(M_PI * x);
+}
+
+int main(void)
+{
+    double a = 0.1;   /* РЅР°С‡Р°Р»Рѕ РёРЅС‚РµСЂРІР°Р»Р° */
+    double b = 2.5;   /* РєРѕРЅРµС† РёРЅС‚РµСЂРІР°Р»Р°   */
+    double h;
+
+  
+    printf("РўР°Р±СѓР»РёСЂРѕРІР°РЅРёРµ С„СѓРЅРєС†РёРё: y = x^2 + 2*pi*cos(pi*x)\n");
+    printf("РРЅС‚РµСЂРІР°Р»: [%.1f; %.1f]\n", a, b);
+
+  
+    printf("Р’РІРµРґРёС‚Рµ С€Р°Рі С‚Р°Р±СѓР»СЏС†РёРё h: ");
+    if (scanf("%lf", &h) != 1 || h <= 0.0) {
+        printf("РћС€РёР±РєР°: С€Р°Рі РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹Рј С‡РёСЃР»РѕРј.\n");
+        return 1;
+    }
+
+   
+    printf("\n-------------------\n");
+    printf("|   x   |  f(x)   |\n");
+    printf("-------------------\n");
+
+    for (double x = a; x <= b + 1e-9; x += h) {
+        printf("| %5.2f | %7.4f |\n", x, func(x));
+    }
+    printf("-------------------\n");
 
     
-    struct tm* mytime; // указатель на структуру tm
-    time_t t;          // переменная для системного времени
+    double arr[N];
+    double step = (b - a) / (N - 1);   /* С€Р°Рі РґР»СЏ 100 С‚РѕС‡РµРє */
 
-    //  Получение системного времени
-    t = time(NULL);
+    for (int i = 0; i < N; i++)
+        arr[i] = func(a + i * step);
 
-    //  Трансформация в структуру tm
-    mytime = localtime(&t);
+    double sum_pos = 0.0, sum_neg = 0.0;
+    int cnt_pos = 0, cnt_neg = 0;
 
-    //  Вывод времени
-    printf("Текущее время: %02d:%02d:%02d\n",
-        mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
+    for (int i = 0; i < N; i++) {
+        if (arr[i] > 0.0)      { sum_pos += arr[i]; cnt_pos++; }
+        else if (arr[i] < 0.0) { sum_neg += arr[i]; cnt_neg++; }
+    }
 
-    // Получение месяца (0-11, поэтому +1) и года (от 1900, поэтому +1900)
-    int month = mytime->tm_mon + 1;
-    int year = mytime->tm_year + 1900;
+    double avg_pos = (cnt_pos > 0) ? sum_pos / cnt_pos : 0.0;
 
-    // Массив римских цифр для месяцев (индекс 1..12)
-    const char* roman[] = {
-        "", "I", "II", "III", "IV", "V", "VI",
-        "VII", "VIII", "IX", "X", "XI", "XII"
-    };
-
-    // Вывод месяца римской цифрой и года
-    printf("Месяц: %s\n", roman[month]);
-    printf("Год: %d\n", year);
+    printf("\nРњР°СЃСЃРёРІ: arr[%d]  (x РѕС‚ %.1f РґРѕ %.1f)\n", N, a, b);
+    printf("РќР°РєРѕРїР»РµРЅРЅР°СЏ СЃСѓРјРјР° РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹С…: %.6f\n", sum_pos);
+    printf("РќР°РєРѕРїР»РµРЅРЅР°СЏ СЃСѓРјРјР° РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹С…: %.6f\n", sum_neg);
+    printf("РљРѕР»РёС‡РµСЃС‚РІРѕ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹С…:        %d\n", cnt_pos);
+    printf("РљРѕР»РёС‡РµСЃС‚РІРѕ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹С…:        %d\n", cnt_neg);
+    printf("РЎСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅС‹С…:  %.6f\n", avg_pos);
 
     return 0;
 }
